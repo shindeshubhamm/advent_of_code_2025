@@ -8,9 +8,21 @@ import (
 	"strings"
 )
 
-const INPUT_FILE_PATH = "./day1/input.txt"
+func countPassThroughZeroRight(position, distance int) int {
+	return (position + distance) / 100
+}
 
-func First() {
+func countPassThroughZeroLeft(position, distance int) int {
+	if position == 0 {
+		return distance / 100
+	}
+	if distance >= position {
+		return (distance - position + 100) / 100
+	}
+	return 0
+}
+
+func Second() {
 	data, err := os.ReadFile(INPUT_FILE_PATH)
 	if err != nil {
 		log.Fatal(err)
@@ -20,7 +32,7 @@ func First() {
 	lines_data := strings.Split(file_data, "\n")
 
 	dial_position := 50
-	position_on_zero := 0
+	passes_through_zero := 0
 
 	for _, line := range lines_data {
 		line = strings.TrimSpace(line)
@@ -33,18 +45,16 @@ func First() {
 
 		switch direction {
 		case "R":
+			passes_through_zero += countPassThroughZeroRight(dial_position, distance)
 			dial_position = (dial_position + distance) % 100
 		case "L":
+			passes_through_zero += countPassThroughZeroLeft(dial_position, distance)
 			dial_position = (dial_position - distance) % 100
 			if dial_position < 0 {
 				dial_position += 100
 			}
 		}
-
-		if dial_position == 0 {
-			position_on_zero += 1
-		}
 	}
 
-	fmt.Println(position_on_zero)
+	fmt.Println(passes_through_zero)
 }
